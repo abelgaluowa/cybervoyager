@@ -74,7 +74,7 @@ class Painter {
 
 int main()
 {
-	Shape* pShape = new Square(2);
+    Shape* pShape = new Square(2);
     
     /// smart pointer better.
     Painter painter([pShape](){
