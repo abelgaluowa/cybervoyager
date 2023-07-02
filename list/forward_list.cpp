@@ -4,8 +4,8 @@ using namespace std;
 
 template<typename T>
 struct forward_list_node {
-    forward_list_node(T&& t = T()) 
-        : data(std::forward<T>(t)) {}
+    forward_list_node(const T& t = T()) 
+        : data(t) {}
     T data;
     forward_list_node* next = nullptr;
 };
@@ -21,16 +21,16 @@ struct forward_list_iterator {
   forward_list_iterator(node* node = nullptr)
     : node_(node) {}
   
-  bool operator==(const self& rhs){
+  bool operator==(const self& rhs) const{
       return node_ == rhs.node_;
   }
   
-  bool operator!=(const self& rhs){
+  bool operator!=(const self& rhs) const{
       return !(operator==(rhs));
   }
   
-  reference operator*() { return node_->data; }
-  pointer operator->() { return &(operator*()); }
+  reference operator*() const { return node_->data; }
+  pointer operator->() const { return &(operator*()); }
   
   self& operator++() {
       node_ = node_->next;
@@ -63,7 +63,7 @@ public:
       node_->next = node_;
   }
   ~forward_list() {
-      //clear();
+      clear();
       delete node_;
       node_ = nullptr;
   }
@@ -73,8 +73,9 @@ public:
   reference front() { return *begin(); }
   const_reference front() const { return begin(); }
 
-  void push_front(T&& t) {
-      insert_after(end(), std::forward<T>(t));
+  // void push_front(T&& t) // todo...
+  void push_front(const T& t) {
+      insert_after(end(), t);
   }
   void pop_front() {
       erase_after(end());
@@ -85,8 +86,8 @@ public:
   iterator end() { return node_; }
   const_iterator end() const { return node_; }
 
-  iterator insert_after(iterator pos, T&& t){
-      node* pn = new node(std::forward<T>(t));
+  iterator insert_after(iterator pos, const T& t){
+      node* pn = new node(t);
       pn->next = pos.node_->next;
       pos.node_->next = pn;
       return pn;
@@ -133,6 +134,9 @@ int main()
     l.push_front(2);
     l.push_front(3);
     l.push_front(4);
+
+    int i = 22;
+    l.push_front(i);
 
     l.show();
     l.reverse();
